@@ -1,0 +1,128 @@
+{
+  "report_type": "Psychiatrie — Rapport d'urgence",
+  "template_id": "psychiatrie-urgence",
+  "version": "1.0.0",
+  "system_prompt": "Ce rapport est un compte-rendu psychiatrique de suivi de crise. Respecte strictement la structure fournie. Les sections de niveau 1 sont des titres principaux, les sections de niveau 2 sont des sous-sections. Conserve tous les titres de section en sortie. Produis uniquement le texte du rapport, sans introduction ni conclusion.",
+  "output_format": {
+    "section_separator": "\n\n",
+    "header_style": "title_case",
+    "include_field_labels": true
+  },
+  "fields": [
+    {
+      "id": "motif_recours",
+      "label": "Motif de recours",
+      "level": 1,
+      "required": true,
+      "default_mode": "notes",
+      "prewritten": "",
+      "notes_placeholder": "Décrire le motif principal de consultation (ex: idées suicidaires, anxiété, agitation...)"
+    },
+    {
+      "id": "diagnostic_principal",
+      "label": "Diagnostic principal",
+      "level": 1,
+      "required": true,
+      "default_mode": "paragraph",
+      "icd_lookup": true,
+      "prewritten": "[À compléter — entrer un code ICD pour auto-remplir]",
+      "notes_placeholder": "Entrer un code ICD-11 (ex: 6B43) pour auto-remplir."
+    },
+    {
+      "id": "anamnese",
+      "label": "Anamnèse",
+      "level": 1,
+      "required": true,
+      "default_mode": "notes",
+      "prewritten": "Il s'agit d'un(e) patient(e) de [âge] ans, [sans antécédents psychiatriques connus / avec les antécédents suivants : à compléter], qui se présente dans notre unité [orienté(e) depuis / adressé(e) par] [à compléter]. Comme facteurs de crise, nous retenons [à compléter]. Concernant la situation socioprofessionnelle, [le patient / la patiente] travaille [à compléter]. [Il/Elle] est [à compléter dans la fratrie]. [Il/Elle] rapporte [à compléter] relations familiales.",
+      "notes_placeholder": "Notes de consultations précédentes : présentation actuelle, facteurs de crise, antécédents psychiatriques et somatiques, situation socioprofessionnelle et familiale.",
+      "llm_instruction": "Commence TOUJOURS le paragraphe exactement comme le paragraphe de référence (« Il s'agit d'un(e) patient(e)... »). Utilise les notes fournies pour compléter et enrichir ce paragraphe de référence, en intégrant les informations pertinentes comme complément aux phrases de base. Ne modifie jamais l'ouverture de la première phrase."
+    },
+    {
+      "id": "status_psychique",
+      "label": "Status psychique",
+      "level": 2,
+      "parent": "status",
+      "parent_label": "Status",
+      "required": true,
+      "default_mode": "notes",
+      "prewritten": "Patient(e) de [âge] ans faisant son âge biologique, à la tenue vestimentaire [soignée / négligée] et l'hygiène [correcte / insuffisante]. Pas de troubles de la vigilance ni de fluctuations attentionnelles. Orienté(e) dans les 4 modes. La thymie est [à compléter]. Le discours est [à compléter]. Il n'y a pas de troubles du cours ni du contenu de la pensée. Pas de troubles perceptifs. [Pas d'] idées suicidaires [actives]. Pas de signes d'intoxication ou de sevrage.",
+      "notes_placeholder": "Vigilance, orientation, thymie, discours, pensée, perceptions, idées suicidaires, intoxication.",
+      "llm_instruction": "Commence TOUJOURS le paragraphe exactement comme le paragraphe de référence. Intègre les informations des notes comme compléments en conservant le style clinique."
+    },
+    {
+      "id": "cadre_prise_en_charge",
+      "label": "Cadre de la prise en charge",
+      "level": 2,
+      "parent": "status",
+      "parent_label": "Status",
+      "required": false,
+      "default_mode": "notes",
+      "prewritten": "Suite à l'entretien en urgence, [un suivi de crise est proposé / une hospitalisation est organisée / à compléter] avec [à compléter].",
+      "notes_placeholder": "Cadre proposé : suivi ambulatoire, hospitalisation, fréquence des entretiens, intervenants.",
+      "llm_instruction": "Commence TOUJOURS le paragraphe exactement comme le paragraphe de référence. Intègre les informations des notes comme compléments en conservant le style clinique."
+    },
+    {
+      "id": "diagnostics",
+      "label": "Diagnostics",
+      "level": 2,
+      "parent": "status",
+      "parent_label": "Status",
+      "required": true,
+      "default_mode": "notes",
+      "prewritten": "Nous retenons le diagnostic de [à compléter — entrer un code ICD pour auto-remplir] au vu de [à compléter — symptômes et critères diagnostiques].",
+      "notes_placeholder": "Raisonnement diagnostique, critères retenus, diagnostics différentiels écartés.",
+      "llm_instruction": "Commence TOUJOURS le paragraphe exactement comme le paragraphe de référence (Nous retenons le diagnostic de...). Intègre les informations des notes comme compléments en conservant le style clinique."
+    },
+    {
+      "id": "medication",
+      "label": "Médication",
+      "level": 2,
+      "parent": "status",
+      "parent_label": "Status",
+      "required": false,
+      "default_mode": "notes",
+      "prewritten": "Sur le plan médicamenteux, aucun traitement n'est introduit.",
+      "prewritten_options": [
+        { "label": "Aucun traitement", "text": "Sur le plan médicamenteux, aucun traitement n'est introduit." },
+        { "label": "Traitement prescrit", "text": "Sur le plan médicamenteux, nous prescrivons [médicament] [posologie] [fréquence], à but [objectif]." }
+      ],
+      "notes_placeholder": "Médicaments prescrits, posologie, durée, objectif thérapeutique.",
+      "llm_instruction": "Commence TOUJOURS le paragraphe par « Sur le plan médicamenteux, ». Intègre les informations des notes comme compléments en conservant le style clinique."
+    },
+    {
+      "id": "arret_travail",
+      "label": "AT (Arrêt de travail)",
+      "level": 2,
+      "parent": "status",
+      "parent_label": "Status",
+      "required": false,
+      "widget": "arret_travail",
+      "prewritten_none": "Aucun arrêt de travail prescrit."
+    },
+    {
+      "id": "evolution",
+      "label": "Evolution",
+      "level": 2,
+      "parent": "status",
+      "parent_label": "Status",
+      "required": false,
+      "default_mode": "notes",
+      "prewritten": "Au cours du suivi, [le patient / la patiente] présente [à compléter]. L'évolution clinique est [favorable / défavorable / à compléter].",
+      "notes_placeholder": "Evolution clinique : thymie, idées suicidaires, anxiété, fonctionnement.",
+      "llm_instruction": "Commence TOUJOURS le paragraphe exactement comme le paragraphe de référence (Au cours du suivi...). Intègre les informations des notes comme compléments en conservant le style clinique."
+    },
+    {
+      "id": "suite_prise_en_charge",
+      "label": "Suite de la prise en charge",
+      "level": 2,
+      "parent": "status",
+      "parent_label": "Status",
+      "required": false,
+      "default_mode": "notes",
+      "prewritten": "Lors du bilan, [une perspective de suivi à compléter] est relevée. [Le patient / La patiente] [souhaite à compléter / est adressé(e) à à compléter].",
+      "notes_placeholder": "Plan de sortie, orientations, transmission de dossier, disponibilité en cas d'urgence.",
+      "llm_instruction": "Commence TOUJOURS le paragraphe exactement comme le paragraphe de référence (Lors du bilan...). Intègre les informations des notes comme compléments en conservant le style clinique."
+    }
+  ]
+}

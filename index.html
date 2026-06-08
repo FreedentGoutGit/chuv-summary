@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="MedReport">
+  <meta name="description" content="Assistant de rédaction de rapports médicaux">
+  <title>MedReport — Assistant de rapport</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/images.jpeg" type="image/jpeg">
+  <link rel="apple-touch-icon" href="icons/images.jpeg">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="frontend/css/base.css">
+  <link rel="stylesheet" href="frontend/css/layout.css">
+  <link rel="stylesheet" href="frontend/css/components.css">
+  <link rel="stylesheet" href="frontend/css/form.css">
+  <link rel="stylesheet" href="frontend/css/editor.css">
+  <link rel="stylesheet" href="frontend/css/modal.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ══════════════════════════════════════════
+       NAV BAR (shared across form + editor)
+  ══════════════════════════════════════════ -->
+  <nav class="nav-bar" id="nav-bar">
+    <button class="nav-bar__back icon-btn" id="btn-back-home" style="display:none" title="Retour à l'accueil">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+
+    <div class="nav-bar__title" id="nav-form-title">MedReport</div>
+
+    <div class="nav-bar__actions">
+      <!-- Save draft (form screen only) -->
+      <button class="btn btn-secondary btn-sm" id="btn-save-prompt" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+        </svg>
+        Brouillon
+      </button>
+      <!-- Settings -->
+      <button class="icon-btn" id="btn-settings" title="Paramètres">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════
+       SCREEN: HOME
+  ══════════════════════════════════════════ -->
+  <section class="screen" id="screen-home">
+
+    <div class="home-header">
+      <div class="home-header__logo">
+        <img src="icons/images.jpeg" alt="MedReport logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">
+      </div>
+      <h1>MedReport</h1>
+      <p>Assistant de rédaction de rapports médicaux</p>
+    </div>
+
+    <!-- Templates -->
+    <div class="home-section">
+      <div class="home-section__title">Nouveau rapport</div>
+      <div class="template-grid" id="home-template-grid">
+        <div class="card" style="padding:var(--space-4);color:var(--color-text-muted);font-size:var(--font-size-sm)">
+          Chargement...
+        </div>
+      </div>
+    </div>
+
+    <!-- Past prompts -->
+    <div class="home-section" id="home-past-section" style="display:none">
+      <div class="home-section__title">Brouillons récents</div>
+      <div class="past-prompt-list" id="home-past-list"></div>
+    </div>
+
+    <!-- File management -->
+    <div class="home-section">
+      <div class="home-section__title">Fichiers</div>
+      <div style="display:flex;gap:var(--space-3);flex-wrap:wrap;align-items:center">
+        <button class="btn btn-secondary" id="btn-pick-directory">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+          Choisir un dossier de sauvegarde
+        </button>
+        <label class="btn btn-ghost" style="cursor:pointer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          Charger un brouillon
+          <input type="file" id="past-prompt-file-input" accept=".json" style="display:none">
+        </label>
+      </div>
+      <p class="text-xs text-muted" style="margin-top:var(--space-3)">
+        Les rapports et brouillons sont sauvegardés dans le dossier choisi.<br>
+        Sur les navigateurs non compatibles (Firefox, Safari), un téléchargement sera proposé.
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       SCREEN: FORM
+  ══════════════════════════════════════════ -->
+  <section class="screen form-screen" id="screen-form">
+
+    <div id="form-fields-container"></div>
+
+    <!-- Sticky submit bar -->
+    <div class="submit-bar">
+      <span class="text-xs text-muted">* Champs requis</span>
+      <button class="btn btn-primary" id="btn-generate">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        Générer le rapport
+      </button>
+    </div>
+
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       SCREEN: EDITOR
+  ══════════════════════════════════════════ -->
+  <section class="screen editor-screen" id="screen-editor">
+
+    <div class="editor-toolbar" id="editor-toolbar">
+      <span class="editor-toolbar__title">Rapport généré</span>
+      <span class="editor-status" id="editor-status">Enregistré</span>
+
+      <button class="btn btn-ghost btn-sm" id="editor-btn-copy">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        Copier
+      </button>
+      <button class="btn btn-secondary btn-sm" id="editor-btn-save">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+        </svg>
+        Enregistrer .txt
+      </button>
+      <button class="btn btn-ghost btn-sm" id="editor-btn-back">
+        ← Retour au formulaire
+      </button>
+    </div>
+
+    <div class="editor-container">
+      <textarea class="editor-textarea" id="editor-textarea" spellcheck="false" placeholder="Le rapport généré apparaîtra ici..."></textarea>
+      <div class="editor-footer">
+        <span class="editor-footer__stat" id="editor-word-count">0 mots</span>
+        <span class="editor-footer__stat" id="editor-char-count">0 caractères</span>
+      </div>
+    </div>
+
+  </section>
+
+</div><!-- #app -->
+
+<!-- ══════════════════════════════════════════
+     LOADING OVERLAY (global)
+══════════════════════════════════════════ -->
+<div class="loading-overlay hidden" id="loading-overlay">
+  <div class="loading-card">
+    <div class="spinner"></div>
+    <div class="loading-card__title">Veuillez patienter</div>
+    <div class="loading-card__message">Génération du rapport en cours...</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     JS (ES modules)
+══════════════════════════════════════════ -->
+<script type="module">
+  import { init } from './frontend/js/app.js';
+
+  // Show/hide nav elements per screen
+  const observer = new MutationObserver(() => {
+    const onForm   = document.getElementById('screen-form').classList.contains('active');
+    const onEditor = document.getElementById('screen-editor').classList.contains('active');
+    const onHome   = document.getElementById('screen-home').classList.contains('active');
+
+    document.getElementById('btn-back-home').style.display   = (onForm || onEditor) ? '' : 'none';
+    document.getElementById('btn-save-prompt').style.display  = onForm ? '' : 'none';
+    document.querySelector('.submit-bar').style.display       = onForm ? '' : 'none';
+    if (onHome) document.getElementById('nav-form-title').textContent = 'MedReport';
+  });
+
+  document.querySelectorAll('.screen').forEach(s =>
+    observer.observe(s, { attributes: true, attributeFilter: ['class'] })
+  );
+
+  // Boot
+  init();
+</script>
+
+</body>
+</html>

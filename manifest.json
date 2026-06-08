@@ -1,0 +1,21 @@
+{
+  "name": "MedReport — Assistant de rapport",
+  "short_name": "MedReport",
+  "description": "Assistant de rédaction de rapports médicaux pour les professionnels de santé",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["medical", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/images.jpeg",
+      "sizes": "any",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

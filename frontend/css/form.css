@@ -1,0 +1,314 @@
+/* form.css — field blocks, section cards, ICD lookup widget */
+
+/* ── Level-1 section card ──────────────────────────────── */
+.section-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+}
+
+.section-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.section-card__number {
+  width: 26px;
+  height: 26px;
+  background: var(--color-accent);
+  color: white;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.section-card__title {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text);
+  flex: 1;
+}
+
+.section-card__body {
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ── Level-2 field block (nested) ──────────────────────── */
+.field-block {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color var(--transition);
+}
+
+.field-block:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-ring);
+}
+
+.field-block__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border-light);
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.field-block__label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  flex: 1;
+  min-width: 120px;
+}
+.field-block__label .required-star {
+  color: var(--color-danger);
+  margin-left: 2px;
+}
+
+.field-block__body {
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ── Panels (paragraph / notes) ────────────────────────── */
+.field-panel {
+  display: none;
+}
+.field-panel.active {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.field-textarea {
+  width: 100%;
+  padding: var(--space-3) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height);
+  resize: vertical;
+  min-height: 90px;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.field-textarea::placeholder { color: var(--color-text-light); }
+.field-textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-ring);
+}
+
+/* Notes textarea — slightly taller by default */
+.field-textarea--notes {
+  min-height: 110px;
+}
+
+/* ── Prewritten options dropdown ───────────────────────── */
+.prewritten-select-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.prewritten-select-row label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.prewritten-select {
+  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-6) var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  cursor: pointer;
+  outline: none;
+}
+.prewritten-select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-ring);
+}
+
+/* ── ICD lookup widget ─────────────────────────────────── */
+.icd-widget {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-accent-light);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  border-radius: var(--radius-md);
+}
+
+.icd-widget__label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.icd-widget__row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* ── CIM-10 autocomplete ───────────────────────────────────── */
+.icd-autocomplete-wrap {
+  position: relative;
+}
+
+.icd-autocomplete-input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  outline: none;
+  box-sizing: border-box;
+}
+.icd-autocomplete-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent-ring);
+}
+.icd-autocomplete-input::placeholder {
+  color: var(--color-text-light);
+}
+
+.icd-autocomplete-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 100;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.icd-autocomplete-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  transition: background var(--transition);
+  border-bottom: 1px solid var(--color-border-light);
+}
+.icd-autocomplete-item:last-child { border-bottom: none; }
+.icd-autocomplete-item:hover,
+.icd-autocomplete-item:focus {
+  background: var(--color-accent-light);
+  outline: none;
+}
+
+.icd-autocomplete-code {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-accent);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.icd-autocomplete-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.icd-widget__status {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-style: italic;
+  flex: 1;
+}
+.icd-widget__status--error  { color: var(--color-danger); font-style: normal; }
+.icd-widget__status--success{ color: var(--color-success); font-style: normal; }
+
+/* ── Form note (required fields reminder) ──────────────── */
+.form-note {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  padding: var(--space-2) 0;
+}
+
+/* ── Past prompts list ─────────────────────────────────── */
+.past-prompt-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.past-prompt-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: left;
+  width: 100%;
+}
+.past-prompt-item:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+}
+.past-prompt-item__icon {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+.past-prompt-item__icon svg { width: 16px; height: 16px; }
+.past-prompt-item__name {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.past-prompt-item__date {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
