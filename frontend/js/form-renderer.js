@@ -242,12 +242,13 @@ function _renderField(field) {
       status.textContent = 'Chargement...';
 
       if (!icdClient.isConfigured()) {
-        const fakeResult = { title: label, description: '', inclusions: [], code, version: 'CIM-10' };
+        const cleanTitle = label.startsWith(code + ' - ') ? label.slice(code.length + 3) : label;
+        const fakeResult = { title: cleanTitle, description: '', inclusions: [], code, version: 'CIM-10' };
         paraTa.value = formatICDTitle(fakeResult);
         _state[field.id].paragraphValue = paraTa.value;
         _state[field.id].icdRaw = undefined;
         _handleToggle(field.id, 'paragraph', block);
-        status.textContent = `✓ ${label}`;
+        status.textContent = `✓ ${cleanTitle}`;
         status.className = 'icd-widget__status icd-widget__status--success';
         return;
       }
@@ -255,12 +256,13 @@ function _renderField(field) {
       const result = await icdClient.lookup(uri);
       if (!result) {
         // Fallback: use CSV label without description
-        const fakeResult = { title: label, description: '', inclusions: [], code, version: 'CIM-10' };
+        const cleanTitle = label.startsWith(code + ' - ') ? label.slice(code.length + 3) : label;
+        const fakeResult = { title: cleanTitle, description: '', inclusions: [], code, version: 'CIM-10' };
         paraTa.value = formatICDTitle(fakeResult);
         _state[field.id].paragraphValue = paraTa.value;
         _state[field.id].icdRaw = undefined;
         _handleToggle(field.id, 'paragraph', block);
-        status.textContent = `✓ ${label}`;
+        status.textContent = `✓ ${cleanTitle}`;
         status.className = 'icd-widget__status icd-widget__status--success';
         return;
       }

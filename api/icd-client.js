@@ -44,12 +44,10 @@ export async function search(query) {
       exact.push(entry);
     } else if (codeNorm.startsWith(q)) {
       prefix.push(entry);
-    } else {
+    } else if (text.length < 50) {
       const combined = entry.labelNorm + ' ' + entry.synsNorm;
       if (tokens.every(t => combined.includes(t))) text.push(entry);
     }
-
-    if (exact.length + prefix.length + text.length >= 50) break;
   }
 
   return [...exact, ...prefix, ...text]
