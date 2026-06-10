@@ -61,20 +61,28 @@ jobs:
       - name: Validate HTML structure
         run: npx --yes htmlhint index.html
 
-      - name: Check for absolute paths that break subdirectory hosting
+      - name: Check for absolute resource paths that break subdirectory hosting
         run: |
           bad=0
-          # Detect /foo paths (but not protocol-relative or comment lines)
-          while IFS= read -r line; do
-            echo "::error file=service-worker.js::Absolute path found: $line"
+          # PRECACHE_ASSETS entries must not start with '/' (would resolve to domain root)
+          if grep -qE "^\s+'/" service-worker.js; then
+            grep -nE "^\s+'/" service-worker.js | while IFS= read -r line; do
+              echo "::error file=service-worker.js::PRECACHE_ASSETS entry uses absolute path: $line"
+            done
             bad=$((bad + 1))
-          done < <(grep -nE "'\s*/[a-zA-Z]" service-worker.js || true)
-          while IFS= read -r line; do
-            echo "::error file=api/icd-client.js::Absolute path found: $line"
+          fi
+          # CSV_PATH must not be an absolute path
+          if grep -qE "CSV_PATH\s*=\s*'/" api/icd-client.js; then
+            echo "::error file=api/icd-client.js::CSV_PATH uses absolute path"
             bad=$((bad + 1))
-          done < <(grep -nE "CSV_PATH\s*=\s*'/" api/icd-client.js || true)
+          fi
+          # Service worker registration must not use an absolute path
+          if grep -qE "serviceWorker\.register\s*\(\s*'/" frontend/js/app.js; then
+            echo "::error file=frontend/js/app.js::Service worker registered with absolute path"
+            bad=$((bad + 1))
+          fi
           if [ $bad -gt 0 ]; then
-            echo "::error::Absolute paths detected — these break GitHub Pages subdirectory hosting"
+            echo "::error::Absolute resource paths detected — these break GitHub Pages subdirectory hosting"
             exit 1
           fi
           echo "No problematic absolute paths found."
