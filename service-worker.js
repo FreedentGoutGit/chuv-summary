@@ -3,23 +3,23 @@
 const CACHE_NAME = 'medreport-v6';
 
 const PRECACHE_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/frontend/css/base.css',
-  '/frontend/css/layout.css',
-  '/frontend/css/components.css',
-  '/frontend/css/form.css',
-  '/frontend/css/editor.css',
-  '/frontend/css/modal.css',
-  '/frontend/js/app.js',
-  '/frontend/js/form-renderer.js',
-  '/frontend/js/file-handler.js',
-  '/frontend/js/editor.js',
-  '/frontend/js/settings.js',
-  '/api/llm-client.js',
-  '/api/icd-client.js',
-  '/api/prompt-builder.js',
+  './',
+  './index.html',
+  './manifest.json',
+  './frontend/css/base.css',
+  './frontend/css/layout.css',
+  './frontend/css/components.css',
+  './frontend/css/form.css',
+  './frontend/css/editor.css',
+  './frontend/css/modal.css',
+  './frontend/js/app.js',
+  './frontend/js/form-renderer.js',
+  './frontend/js/file-handler.js',
+  './frontend/js/editor.js',
+  './frontend/js/settings.js',
+  './api/llm-client.js',
+  './api/icd-client.js',
+  './api/prompt-builder.js',
 ];
 
 // Domains that must never be cached (API calls with secrets)
@@ -61,8 +61,8 @@ self.addEventListener('fetch', event => {
 
   // Network-first for template JSON files and the CIM-10 CSV
   if (
-    (url.pathname.startsWith('/templates/') && url.pathname.endsWith('.json')) ||
-    (url.pathname.startsWith('/media/')     && url.pathname.endsWith('.csv'))
+    (url.pathname.includes('/templates/') && url.pathname.endsWith('.json')) ||
+    (url.pathname.includes('/media/')     && url.pathname.endsWith('.csv'))
   ) {
     event.respondWith(
       fetch(event.request)

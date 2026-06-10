@@ -1,0 +1,103 @@
+name: CI & Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check all referenced files exist
+        run: |
+          missing=0
+          files=(
+            index.html
+            manifest.json
+            service-worker.js
+            frontend/css/base.css
+            frontend/css/layout.css
+            frontend/css/components.css
+            frontend/css/form.css
+            frontend/css/editor.css
+            frontend/css/modal.css
+            frontend/js/app.js
+            frontend/js/form-renderer.js
+            frontend/js/file-handler.js
+            frontend/js/editor.js
+            frontend/js/settings.js
+            api/llm-client.js
+            api/icd-client.js
+            api/prompt-builder.js
+            media/CIM-10.csv
+            templates/psychiatrie-urgence.json
+          )
+          for f in "${files[@]}"; do
+            if [ ! -f "$f" ]; then
+              echo "MISSING: $f"
+              missing=$((missing + 1))
+            fi
+          done
+          if [ $missing -gt 0 ]; then
+            echo "::error::$missing file(s) missing from the repository"
+            exit 1
+          fi
+          echo "All expected files present."
+
+      - name: Validate HTML structure
+        run: npx --yes htmlhint index.html
+
+      - name: Check for absolute paths that break subdirectory hosting
+        run: |
+          bad=0
+          # Detect /foo paths (but not protocol-relative or comment lines)
+          while IFS= read -r line; do
+            echo "::error file=service-worker.js::Absolute path found: $line"
+            bad=$((bad + 1))
+          done < <(grep -nE "'\s*/[a-zA-Z]" service-worker.js || true)
+          while IFS= read -r line; do
+            echo "::error file=api/icd-client.js::Absolute path found: $line"
+            bad=$((bad + 1))
+          done < <(grep -nE "CSV_PATH\s*=\s*'/" api/icd-client.js || true)
+          if [ $bad -gt 0 ]; then
+            echo "::error::Absolute paths detected — these break GitHub Pages subdirectory hosting"
+            exit 1
+          fi
+          echo "No problematic absolute paths found."
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

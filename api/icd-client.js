@@ -1,6 +1,6 @@
 // CIM-10 client — local CSV search + LIRMM BioPortal API for descriptions (via Cloudflare proxy).
 
-const CSV_PATH = '/media/CIM-10.csv';
+const CSV_PATH = './media/CIM-10.csv';
 
 let _lirmmKey  = '';
 let _proxyUrl  = '';
